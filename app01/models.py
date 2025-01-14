@@ -18,6 +18,22 @@ class player(models.Model):
     def __str__(self):
         return self.full_name    
 
+class staff(models.Model):
+    full_name=models.CharField(max_length=200)
+    profile_photo=models.ImageField(upload_to='plyrprof')
+    contact=models.CharField(max_length=200)
+    gender=models.CharField(max_length=200)
+    dob=models.CharField(max_length=200)
+    email=models.CharField(max_length=200)
+    address=models.CharField(max_length=200)
+    department=models.CharField(max_length=200)
+    role=models.CharField(max_length=200)
+    qualification=models.CharField(max_length=200)
+    password=models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.full_name    
+
    
 
 

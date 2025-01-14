@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Player Profile{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'styles/player_prof.css' %}">
+<style>
+    .profile-header {
+    
+    background-image: url("{% static 'images/hero_sec_bg.jpeg' %}");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: #333;
+    color: white;
+    padding: 3rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 4px solid #d4edda;
+ 
+}
+
+
+
+</style>
+<!-- Header Section -->
+<div class="profile-header">
+
+    <img src="{{ result.profile_photo.url }}" alt="Player Image">
+    <div class="info">
+        <p class="jersey-number">{{ result.jersey_number }}</p>
+        <h1>{{ result.full_name }}</h1>
+        <p class="position">{{ result.position }}</p>
+        <!-- <div class="stats">
+            <div>
+                <span>23</span>
+                <label>Matches Played</label>
+            </div>
+            <div>
+                <span>14</span>
+                <label>Goals</label>
+            </div>
+            <div>
+                <span>7</span>
+                <label>Assists</label>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<!-- Details Section -->
+<div class="card-container">
+    <!-- Personal Details -->
+    <div class="card">
+        <h2>Personal Details</h2>
+        <ul>
+            <li><i class="fa fa-user"></i> Full Name: {{ result.full_name }}</li>
+            <li><i class="fa fa-calendar"></i> Date of Birth: {{ result.dob }}</li>
+            <li><i class="fa fa-map-marker-alt"></i> Address: {{ result.address }}</li>
+            <li><i class="fa fa-phone"></i> Contact: {{ result.contact }}</li>
+        </ul>
+    </div>
+
+    <!-- Career -->
+    <div class="card">
+        <h2>Career</h2>
+        <ul>
+            <li><i class="fa fa-futbol"></i> Academy: Flamengo</li>
+            <li><i class="fa fa-futbol"></i> Club: Real Madrid</li>
+        </ul>
+    </div>
+</div>
+
+<div class="footer-links">
+    <a href="#">View Extended Statistics</a>
+</div>
+
+{% endblock %}
