@@ -14,5 +14,7 @@ urlpatterns=[
     path('coach_dashboard/',views.coach_dashboard,name='coach_dashboard'),
     path('medical_dashboard/',views.medical_dashboard,name='medical_dashboard'),
     path('analyst_dashboard/',views.analyst_dashboard,name='analyst_dashboard'),
+    path('take_player_attendance/',views.take_player_attendance,name='take_player_attendance'),
+    path('view_player_attendance/', views.view_player_attendance, name='view_player_attendance'),
 
 ]

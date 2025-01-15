@@ -1,5 +1,7 @@
 from django.shortcuts import render,redirect
 from django.core.files.storage import FileSystemStorage
+from django.contrib import messages
+from datetime import date
 
 from . models import *
 
@@ -22,8 +24,16 @@ def player_registration(request):
         jersey_number=request.POST.get('jersey_number')
         position=request.POST.get('position')
         password=request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            return render(request, 'player_registration.html', {'error_message': 'Passwords do not match.'})
+
+
         registration=player(full_name=full_name,profile_photo=profile_photo,contact=contact,gender=gender,dob=dob,email=email,guardian_name=guardian_name,address=address,jersey_number=jersey_number,position=position,password=password)
         registration.save()
+        messages.success(request, "Player successfully registered!")
+        return redirect('player_registration')
     return render(request,'player_registration.html')
 
 
@@ -118,4 +128,61 @@ def medical_dashboard(request):
 
 def analyst_dashboard(request):
     return render(request,'analyst_dashboard.html')
+
+
+
+
+def take_player_attendance(request):
+    if request.method == "POST":
+        attendance_date = request.POST.get('attendance_date', date.today())
+        for player_instance in player.objects.all():
+            # Get the attendance status using the player ID
+            attendance_status = request.POST.get(f'attendance_{player_instance.id}')
+            late_minutes = request.POST.get(f'late_minutes_{player_instance.id}', None)
+
+            # Skip if no attendance status is selected for the player
+            if not attendance_status:
+                continue
+
+            # Convert late_minutes to an integer if it's not empty and "Late" is selected
+            if attendance_status == "Late" and late_minutes:
+                late_minutes = int(late_minutes)
+            else:
+                late_minutes = None
+
+            # Save attendance record
+            Attendance.objects.create(
+                player_dtls=player_instance,
+                date=attendance_date,
+                status=attendance_status,
+                late_minutes=late_minutes,
+                taken_by=staff.objects.get(id=request.session['sid']),  # Assuming staff is logged in
+            )
+
+        messages.success(request, "Attendance successfully saved!")
+        return redirect('coach_dashboard')
+    today_date = date.today()
+    players = player.objects.all()
+    return render(request, 'take_player_attendance.html', {'players': players, 'today_date': today_date})
+
+
+
+
+def view_player_attendance(request):
+    if request.method == "GET":
+        # Get the date from the query parameters
+        filter_date = request.GET.get('filter_date')
+        
+        if filter_date:
+            # Filter attendance records by the selected date
+            attendance_records = Attendance.objects.filter(date=filter_date).select_related('player_dtls')
+        else:
+            # Show all records if no date is selected
+            attendance_records = Attendance.objects.all().select_related('player_dtls')
+
+        context = {
+            'attendance_records': attendance_records,
+            'filter_date': filter_date,  # To prefill the date field in the template
+        }
+        return render(request, 'view_player_attendance.html', context)
 

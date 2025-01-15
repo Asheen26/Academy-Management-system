@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Player Attendance {% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'styles/take_player_attend.css' %}">
+<div class="attendance-container">
+    <div class="attendance-header">
+        <h1>Player Attendance</h1>
+        <h6>Date: {{ today_date }}</h6>
+    </div>
+
+    <form method="POST" action="{% url 'take_player_attendance' %}">
+        {% csrf_token %}
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>SI No.</th>
+                        <th>Player Name</th>
+                        <th>Jersey Number</th>
+                        <th>Attendance</th>
+                        <th>Late Minutes (if applicable)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ player.full_name }}</td>
+                        <td>{{ player.jersey_number }}</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Attendance">
+                                <input type="radio" class="btn-check" name="attendance_{{ player.id }}" id="present_{{ player.id }}" value="Present">
+                                <label class="btn btn-outline-success" for="present_{{ player.id }}">Present</label>
+
+                                <input type="radio" class="btn-check" name="attendance_{{ player.id }}" id="absent_{{ player.id }}" value="Absent">
+                                <label class="btn btn-outline-danger" for="absent_{{ player.id }}">Absent</label>
+
+                                <input type="radio" class="btn-check" name="attendance_{{ player.id }}" id="late_{{ player.id }}" value="Late">
+                                <label class="btn btn-outline-warning" for="late_{{ player.id }}">Late</label>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="number" name="late_minutes_{{ player.id }}" class="form-control" placeholder="Minutes" disabled id="late_minutes_{{ player.id }}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <button type="submit">Submit Attendance</button>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const playerId = this.name.split('_')[1];
+            const lateMinutesInput = document.getElementById(`late_minutes_${playerId}`);
+
+            if (this.value === 'Late') {
+                lateMinutesInput.disabled = false;
+            } else {
+                lateMinutesInput.disabled = true;
+                lateMinutesInput.value = ''; // Clear the input if not late
+            }
+        });
+    });
+</script>
+
+{% endblock %}

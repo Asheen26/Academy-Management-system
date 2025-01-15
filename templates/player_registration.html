@@ -70,6 +70,20 @@
         border: 2px solid #178754;
     }
 
+    .alert-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            z-index: 1000;
+        }
+
     /* Responsive Styling */
     @media (max-width: 767px) {
         .container {
@@ -77,7 +91,11 @@
         }
     }
 </style>
-
+{% if error_message %}
+    <div class="alert alert-danger">
+        {{ error_message }}
+    </div>
+{% endif %}
 <!-- Player Registration Form -->
 <div class="container mt-5 d-flex justify-content-center">
     <div class="card shadow-lg border-0 rounded-4" style="max-width: 600px; width: 100%;">
@@ -187,6 +205,15 @@
     </div>
 </div>
 
+
+<div id="popup" style="display:none; background-color: green; color: white; padding: 10px; position: fixed; top: 20px; right: 20px; border-radius: 5px;">
+    Registration Successful!
+</div>
+
+<!-- Add a hidden field or data attribute in the form -->
+<input type="hidden" id="message-status" value="{% if messages %}{% for message in messages %}{% if message.tags == 'success' %}success{% endif %}{% endfor %}{% endif %}">
+
+
 <!-- Preview Image Script -->
 <script>
     function previewImage(event) {
@@ -200,22 +227,19 @@
     }
 
     // Password validation
-    document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirm_password');
-    const errorMessage = document.getElementById('password_error');
+    window.onload = function() {
+        const messageStatus = document.getElementById('message-status').value;
+        if (messageStatus === 'success') {
+            // Show the success popup
+            const popup = document.getElementById('popup');
+            popup.style.display = 'block';
 
-    form.addEventListener('submit', function (event) {
-        if (password.value !== confirmPassword.value) {
-            errorMessage.style.display = 'block';
-            event.preventDefault(); // Prevents the form from submitting
-        } else {
-            errorMessage.style.display = 'none';
+            // Hide the popup after 3 seconds
+            setTimeout(function() {
+                popup.style.display = 'none';
+            }, 3000);
         }
-    });
-});
-
+    };
 </script>
 
 {% endblock %}

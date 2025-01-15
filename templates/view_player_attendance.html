@@ -1,0 +1,50 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Player Attendance Record{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>View Player Attendance</h2>
+    
+    <!-- Date Filter Form -->
+    <form method="GET" class="mb-4">
+        <label for="filter_date">Filter by Date:</label>
+        <input type="date" id="filter_date" name="filter_date" class="form-control d-inline-block w-auto" value="{{ filter_date }}">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    <!-- Attendance Table -->
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Player Name</th>
+                <th>Jersey Number</th>
+                <th>Status</th>
+                <th>Late Minutes</th>
+                <th>Taken By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.player_dtls.full_name }}</td>
+                <td>{{ record.player_dtls.jersey_number }}</td>
+                <td>{{ record.status }}</td>
+                <td>{{ record.late_minutes|default:"-" }}</td>
+                <td>{{ record.taken_by.full_name }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No attendance records found for this date.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

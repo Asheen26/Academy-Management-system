@@ -35,5 +35,15 @@ class staff(models.Model):
         return self.full_name    
 
    
+# Attendance model
+class Attendance(models.Model):
 
+    player_dtls = models.ForeignKey(player, on_delete=models.CASCADE, related_name='attendance_records')
+    date = models.DateField(auto_now_add=True)
+    status = models.CharField(max_length=10, default='Present')
+    late_minutes = models.PositiveIntegerField(null=True, blank=True)  # Optional field for late minutes
+    taken_by = models.ForeignKey(staff, on_delete=models.SET_NULL, null=True, related_name='attendances_taken')
+
+    def __str__(self):
+        return f"{self.player_dtls.full_name} - {self.date} - {self.status}"
 
