@@ -1,0 +1,58 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Upload Stats {% endblock %}
+
+{% block content %}
+
+
+<!-- <link rel="stylesheet" href="{% static 'styles/upload_stats.css' %}"> -->
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Upload Player Stats</h2>
+    <form method="POST" action="{% url 'give_player_stats' %}">
+        {% csrf_token %}
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Player Name</th>
+                    <th>Matches</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>Tackles</th>
+                    <th>Saves</th>
+                
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                <tr>
+                    <td>{{ player.full_name }}</td>
+                    <td>
+                        <input type="number" name="matches_{{ player.id }}" class="form-control" required>
+                    </td>
+                    <td>
+                        <input type="number" name="goals_{{ player.id }}" class="form-control" required>
+                    </td>
+                    <td>
+                        <input type="number" name="assists_{{ player.id }}" class="form-control" required>
+                    </td>
+                    <td>
+                        <input type="number" name="tackles_{{ player.id }}" class="form-control" required>
+                    </td>
+                    <td>
+                        <input type="number" name="saves_{{ player.id }}" class="form-control" required>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary mt-3">Submit Stats</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

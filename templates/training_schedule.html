@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Training Schedule {% endblock %}
+
+{% block content %}
+
+<style>
+    /* Basic table styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+
+    /* Dropdown styling */
+    select {
+        -webkit-appearance: none; /* Remove arrow for Webkit browsers */
+        -moz-appearance: none; /* Remove arrow for Firefox */
+        appearance: none; /* Remove default arrow */
+        width: 100%; /* Fill the cell */
+        height: 100%; /* Fill the cell */
+        border: none; /* Remove border */
+        /* background-color: #5c5e60; Default color for 'Rest' */
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+
+select option:hover {
+    background-color: #f00000; /* Change the hover background color */
+    color: white;
+}
+
+    /* Add hover effect for dropdown */
+    select:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Style options if needed */
+    option {
+        font-weight: bold;
+    }
+
+    .overall, .outfield { background-color: #4ec3f6; }
+        .attacking, .defending, .possession, .goalkeeping { background-color: #01685c; }
+        .tactical, .technical, .setpiece { background-color: #1c97f4; }
+        .matchpractice, .matchpreparation { background-color: #0b47a2; }
+        .physical { background-color: #6a1a9a;}
+        .recovery { background-color: #4cb6ad; }
+        .rest { background-color: #5c5e60; }
+        .matchday { background-color:#ac1557; }
+        .extracurricular { background-color: #15ac5e;; }
+</style>
+
+
+<form method="post" action="{% url 'training_schedule' %}">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Session 1</td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+            </tr>
+            <tr>
+                <td>Session 2</td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+            </tr>
+            <tr>
+                <td>Session 3</td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+                <td class="dropdown-cell"></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="submit">Save Schedule</button>
+   
+</form>
+
+<script>
+    const categories = [
+        { name: "Overall", class: "overall" },
+        { name: "Outfield", class: "outfield" },
+        { name: "Attacking", class: "attacking" },
+        { name: "Defending", class: "defending" },
+        { name: "Possession", class: "possession" },
+        { name: "Goalkeeping", class: "goalkeeping" },
+        { name: "Tactical", class: "tactical" },
+        { name: "Technical", class: "technical" },
+        { name: "Set Piece", class: "setpiece" },
+        { name: "Match Practice", class: "matchpractice" },
+        { name: "Match Preparation", class: "matchpreparation" },
+        { name: "Physical", class: "physical" },
+        { name: "Recovery", class: "recovery" },
+        { name: "Rest", class: "rest" },
+        { name: "Match Day", class: "matchday" },
+        { name: "Extracurricular", class: "extracurricular" }
+    ];
+
+    // Get all the dropdown cells
+    const dropdownCells = document.querySelectorAll('.dropdown-cell');
+
+    // Function to create a dropdown
+    function createDropdown(sessionIndex, dayIndex) {
+        const select = document.createElement('select');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.name;
+            option.classList.add(category.class);
+            option.textContent = category.name;
+            select.appendChild(option);
+        });
+        select.name = `session_${sessionIndex + 1}_${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][dayIndex]}`; // Set the name attribute
+        select.value = "Rest"; // Set default value to "Rest"
+        select.style.backgroundColor = getColor("rest"); // Default color for 'Rest'
+        select.addEventListener('change', handleColorChange); // Add event listener
+        return select;
+    }
+
+    // Function to handle color change based on category selection
+    function handleColorChange(event) {
+        const selectedCategory = event.target.value;
+        const categoryClass = event.target.selectedOptions[0].classList[0];
+        event.target.style.backgroundColor = getColor(categoryClass);
+    }
+
+    // Function to map category class to color
+    function getColor(categoryClass) {
+        const colorMap = {
+            "overall": "#4ec3f6",
+            "outfield": "#4ec3f6",
+            "attacking": "#01685c",
+            "defending": "#01685c",
+            "possession": "#01685c",
+            "goalkeeping": "#01685c",
+            "tactical": "#1c97f4",
+            "technical": "#1c97f4",
+            "setpiece": "#1c97f4",
+            "matchpractice": "#0b47a2",
+            "matchpreparation": "#0b47a2",
+            "physical": "#6a1a9a",
+            "recovery": "#4cb6ad",
+            "rest": "#5c5e60",
+            "matchday": "#ac1557",
+            "extracurricular": "#15ac5e"
+        };
+        return colorMap[categoryClass.toLowerCase()] || "#ffffff";
+    }
+
+    // Insert dropdowns into the table cells
+    dropdownCells.forEach((cell, index) => {
+        const sessionIndex = Math.floor(index / 7); // 7 days
+        const dayIndex = index % 7; // 0 to 6 for days
+        const dropdown = createDropdown(sessionIndex, dayIndex);
+        cell.appendChild(dropdown);
+    });
+
+    
+</script>
+
+{% endblock %}

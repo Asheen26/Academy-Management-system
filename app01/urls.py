@@ -16,5 +16,17 @@ urlpatterns=[
     path('analyst_dashboard/',views.analyst_dashboard,name='analyst_dashboard'),
     path('take_player_attendance/',views.take_player_attendance,name='take_player_attendance'),
     path('view_player_attendance/', views.view_player_attendance, name='view_player_attendance'),
+    path('give_player_stats/', views.give_player_stats, name='give_player_stats'),
+    path('view_player_stats/', views.view_player_stats, name='view_player_stats'),
+    path('send-message/', views.send_message, name='send_message'),
+    path('inbox/', views.inbox, name='inbox'),
+    path('upload-workload/', views.upload_workload, name='upload_workload'),
+    path('view-workload/', views.view_workload, name='view_workload'),
+    path('training-schedule/',views.training_schedule,name='training_schedule'),
+    path('view-schedule/', views.view_schedule, name='view_schedule'),
+    path('injury-management/', views.injury_management, name='injury_management'),
+    path('injury/remove/<int:id>/', views.remove_injury, name='remove_injury'),
+    path('active-injury-list/', views.active_injury_list, name='active_injury_list'),
+    path('injury-history/', views.injury_history, name='injury_history'),
 
 ]

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Inbox {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Inbox</h2>
+    
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Your Messages</h5>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ message.sender.full_name }}</strong><br>
+                                <span>{{ message.content }}</span>
+                            </div>
+                            <small class="text-muted">{{ message.timestamp }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">No messages found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

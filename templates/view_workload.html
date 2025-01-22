@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}View Workload Data{% endblock %}
+
+{% block content %}
+<h1>Workload Data</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Training Minutes</th>
+            <th>Intensity</th>
+            <th>Training Workload</th>
+            <th>Match Minutes</th>
+            <th>Match Distance (km)</th>
+            <th>Match Workload</th>
+            <th>Total Workload</th>
+            <th>Last Updated</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for workload in workloads %}
+        <tr>
+            <td>{{ workload.player.full_name }}</td>
+            <td>{{ workload.training_minutes }}</td>
+            <td>{{ workload.intensity }}</td>
+            <td class="workload-category">{{ workload.training_workload }}</td>
+            <td>{{ workload.match_minutes }}</td>
+            <td>{{ workload.distance }}</td>
+            <td class="workload-category">{{ workload.match_workload }}</td>
+            <td class="workload-category">{{ workload.total_workload }}</td>
+            <td>{{ workload.last_updated|date:"Y-m-d H:i:s" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">No workload data available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<style>
+    /* Optional: Add some basic styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .workload-category {
+        font-weight: bold;
+    }
+</style>
+
+
+<script>
+
+    // Map workload categories to colors
+const workloadColors = {
+    low: "green",
+    medium: "yellow",
+    high: "orange",
+    "very high": "red",
+};
+
+// Function to apply colors based on workload category
+function applyWorkloadColors() {
+    // Get all table cells with the class 'workload-category'
+    const workloadCells = document.querySelectorAll(".workload-category");
+    
+    workloadCells.forEach((cell) => {
+        const category = cell.textContent.trim().toLowerCase(); // Get the category text
+        const color = workloadColors[category] || "transparent"; // Get the color or default
+        
+        // Apply the color as background
+        cell.style.backgroundColor = color;
+
+        // Optional: Change text color for better contrast
+        cell.style.color = category === "medium" ? "black" : "white";
+    });
+}
+
+// Call the function after the page loads
+document.addEventListener("DOMContentLoaded", applyWorkloadColors);
+
+</script>
+
+{% endblock %}

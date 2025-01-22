@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Inbox {% endblock %}
+
+{% block content %}
+
+
+<h1>Injury Management</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="player_injured">Select Player:</label>
+    <select name="player_injured" required>
+        {% for player in players %}
+            <option value="{{ player.id }}">{{ player.full_name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="injury_type">Injury Type:</label>
+    <input type="text" name="injury_type" required>
+
+    <label for="injury_date">Injury Date:</label>
+    <input type="date" name="injury_date" required>
+
+    <label for="out_for">Out For:</label>
+    <input type="text" name="out_for" required>
+
+    <label for="recovery_programme">Recovery Programme:</label>
+    <input type="text" name="recovery_programme">
+
+    <button type="submit">Add Injury</button>
+</form>
+
+<h2>Active Injuries</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Injury Type</th>
+            <th>Injury Date</th>
+            <th>Out For</th>
+            <th>Recovery Programme</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for injury in active_injuries %}
+        <tr>
+            <td>{{ injury.player_injured.full_name }}</td>
+            <td>{{ injury.injury_type }}</td>
+            <td>{{ injury.injury_date }}</td>
+            <td>{{ injury.out_for }}</td>
+            <td>{{ injury.recovery_programme }}</td>
+            <td>
+                <form method="post" action="{% url 'remove_injury' injury.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

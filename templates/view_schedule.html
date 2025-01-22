@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Training Schedule {% endblock %}
+
+{% block content %}
+
+<style>
+    /* Optional: Add some basic styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>   
+
+
+<!-- view_schedule.html -->
+<h1>Training Schedule</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Session</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for session in sessions %}
+        <tr>
+            <td>{{ session.session_name }}</td>
+            <td class="color-cell" data-value="{{ session.monday }}">{{ session.monday }}</td>
+            <td class="color-cell" data-value="{{ session.tuesday }}">{{ session.tuesday }}</td>
+            <td class="color-cell" data-value="{{ session.wednesday }}">{{ session.wednesday }}</td>
+            <td class="color-cell" data-value="{{ session.thursday }}">{{ session.thursday }}</td>
+            <td class="color-cell" data-value="{{ session.friday }}">{{ session.friday }}</td>
+            <td class="color-cell" data-value="{{ session.saturday }}">{{ session.saturday }}</td>
+            <td class="color-cell" data-value="{{ session.sunday }}">{{ session.sunday }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    const colorMap = {
+        "Overall": "#4ec3f6",
+        "Outfield": "#4ec3f6",
+        "Attacking": "#01685c",
+        "Defending": "#01685c",
+        "Possession": "#01685c",
+        "Goalkeeping": "#01685c",
+        "Tactical": "#1c97f4",
+        "Technical": "#1c97f4",
+        "Set Piece": "#1c97f4",
+        "Match Practice": "#0b47a2",
+        "Match Preparation": "#0b47a2",
+        "Physical": "#6a1a9a",
+        "Recovery": "#4cb6ad",
+        "Rest": "#5c5e60",
+        "Match Day": "#ac1557",
+        "Extracurricular": "#15ac5e"
+    };
+
+    // Function to apply colors to the cells based on the selected value
+    document.querySelectorAll('.color-cell').forEach(cell => {
+        const value = cell.getAttribute('data-value');
+        cell.style.backgroundColor = colorMap[value] || "#ffffff"; // Default to white if not found
+    });
+</script>
+
+
+
+
+
+{% endblock %}

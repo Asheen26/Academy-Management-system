@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Active Injuries {% endblock %}
+
+{% block content %}
+
+<h1>Active Injury List</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Injury Type</th>
+            <th>Injury Date</th>
+            <th>Out For</th>
+            <th>Recovery Programme</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for injury in active_injuries %}
+        <tr>
+            <td>{{ injury.player_injured.full_name }}</td>
+            <td>{{ injury.injury_type }}</td>
+            <td>{{ injury.injury_date }}</td>
+            <td>{{ injury.out_for }}</td>
+            <td>{{ injury.recovery_programme }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

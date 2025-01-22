@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Workload Monitor {% endblock %}
+
+{% block content %}
+
+<style>
+    /* Optional: Add some basic styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .workload-category {
+        font-weight: bold;
+    }
+</style>
+
+<h1>Upload Workload Data</h1>
+
+<form method="post" action="{% url 'upload_workload' %}">
+    {% csrf_token %}
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Training Minutes</th>
+                
+                <th>Intensity</th>
+                <th>Training Workload</th>
+                <th>Match Minutes</th>
+                <th>Match Distance (km)</th>
+                <th>Match Workload</th>
+                <th>Total Workload</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in player_workload_data %}
+            <tr>
+                <td>{{ data.player.full_name }}</td>
+                <td><input type="number" name="training_minutes_{{ data.player.id }}" value="{{ data.training_minutes }}"></td>
+                <td>
+                    <select name="intensity_{{ data.player.id }}">
+                        <option value="low" {% if data.intensity == "low" %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if data.intensity == "medium" %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if data.intensity == "high" %}selected{% endif %}>High</option>
+                    </select>
+                </td>
+                <td class="workload-category">{{ data.training_workload }}</td>
+
+                <td><input type="number" name="match_minutes_{{ data.player.id }}" value="{{ data.match_minutes }}"></td>
+                
+                <td><input type="number" step="0.1" name="distance_{{ data.player.id }}" value="{{ data.distance }}"></td>
+                
+                <td class="workload-category">{{ data.match_workload }}</td>
+                <td class="workload-category">{{ data.total_workload}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit">Submit</button>
+</form>
+
+
+
+<script>
+
+    // Map workload categories to colors
+const workloadColors = {
+    low: "green",
+    medium: "yellow",
+    high: "orange",
+    "very high": "red",
+};
+
+// Function to apply colors based on workload category
+function applyWorkloadColors() {
+    // Get all table cells with the class 'workload-category'
+    const workloadCells = document.querySelectorAll(".workload-category");
+    
+    workloadCells.forEach((cell) => {
+        const category = cell.textContent.trim().toLowerCase(); // Get the category text
+        const color = workloadColors[category] || "transparent"; // Get the color or default
+        
+        // Apply the color as background
+        cell.style.backgroundColor = color;
+
+        // Optional: Change text color for better contrast
+        cell.style.color = category === "medium" ? "black" : "white";
+    });
+}
+
+// Call the function after the page loads
+document.addEventListener("DOMContentLoaded", applyWorkloadColors);
+
+</script>
+{% endblock %}

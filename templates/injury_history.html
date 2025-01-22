@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Injury History {% endblock %}
+
+{% block content %}
+
+
+<h1>Injury History</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Injury Type</th>
+            <th>Injury Date</th>
+            <th>Out For</th>
+            <th>Recovery Programme</th>
+            <th>Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for injury in injury_history %}
+        <tr>
+            <td>{{ injury.player_injured.full_name }}</td>
+            <td>{{ injury.injury_type }}</td>
+            <td>{{ injury.injury_date }}</td>
+            <td>{{ injury.out_for }}</td>
+            <td>{{ injury.recovery_programme }}</td>
+        </tr>
+            {% endfor%}
+
+    </tbody>
+    </table>
+{% endblock %}

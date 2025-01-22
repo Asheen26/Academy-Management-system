@@ -3,11 +3,47 @@
 
 {% load static %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Analyst Dashboard{% endblock %}
 
 {% block content %}
 
-<h1>admin dash board</h1>
+<h1>Analyst dashboard</h1>
+<a href="{% url 'take_player_attendance' %}">attendance</a>
+<a href="{% url 'view_player_attendance' %}">VIEW Attendance</a>
+<a href="{% url 'give_player_stats' %}">STATS</a>
+<a href="{% url 'send_message' %}">Messages</a>
+<a href="{% url 'inbox' %}">INBOX</a>
+<a href="{% url 'upload_workload' %}">Workload</a>
+<a href="{% url 'injury_management' %}">injury management</a>
+<a href="{% url 'active_injury_list' %}">injury active</a>
+<a href="{% url 'injury_history' %}">injury history</a>
+
+
+
+
+{% if messages %}
+    <div class="alert alert-success" id="success-alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+    // Ensure the DOM is fully loaded before running the script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to hide the success alert after 5 seconds
+        setTimeout(function() {
+            var alert = document.getElementById("success-alert");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 3000); // 3000 milliseconds = 3 seconds
+    });
+</script>
+
 {% endblock %}
+
+
 
 
