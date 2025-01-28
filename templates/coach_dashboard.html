@@ -7,41 +7,125 @@
 
 {% block content %}
 
-<h1>coach dashboard</h1>
-<a href="{% url 'take_player_attendance' %}">attendance</a>
-<a href="{% url 'view_player_attendance' %}">VIEW Attendance</a>
-<a href="{% url 'give_player_stats' %}">STATS</a>
-<a href="{% url 'view_player_stats' %}">View STATS</a>
-<a href="{% url 'send_message' %}">Messages</a>
-<a href="{% url 'inbox' %}">INBOX</a>
-<a href="{% url 'view_workload' %}">View Workload</a><br>
-<a href="{% url 'training_schedule' %}">Training schedule</a>
+
+
+<style>
+   
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        background-color: #b7cab9;
+        color: #333;
+    }
+
+ 
+    .card-container {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 4rem 2rem;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .card {
+        background:rgb(235, 247, 236);
+
+        border-radius: 12px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        min-width: 280px;
+        max-width: 320px;
+        text-align: center;
+        border: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer; 
+        text-decoration: none; 
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Image Section */
+    .card img {
+        width: 100%;
+        border-radius: 8px;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    /* Title Section */
+    .card h2 {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+        color: #34495e;
+        font-weight:650;
+    }
+    .page-title {
+    text-align: center;
+    font-size: 1em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    font-weight: 900;
+    color: aliceblue;
+    background:linear-gradient(135deg, #178754, #041a10); 
+    border-radius: 5px;
+}
+
+
+   
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .card-container {
+            flex-direction: column;
+            padding: 2rem 1rem;
+        }
+
+        .card {
+            min-width: 100%;
+        }
+    }
+</style>
+
+<div class="page-title">
+    <h2>Coach Dashboard</h2>
+</div>
+
+
+<div class="card-container">
+   
+    <a href="{% url 'training_schedule' %}" class="card">
+        <img src="{% static 'images\training_scheduke.jpg' %}" alt="Training Schedule">
+        <h2>Training Schedule</h2>
+    </a>
+
+
+  
+    <a href="{% url 'player_list' %}" class="card">
+        <img src="{% static 'images\player_profile.jpg' %}" alt="Profile">
+        <h2>Player List</h2>
+    </a>
+
+    <a href="{% url 'view_workload' %}" class="card">
+        <img src="{% static 'images\medical_report.jpg' %}" alt="Medical">
+        <h2>Workload</h2>
+    </a>
+    <a href="{% url 'view_player_stats' %}" class="card">
+        <img src="{% static 'images\stats.jpg' %}" alt="Stats">
+        <h2>Stats</h2>
+    </a>
+    <a href="{% url 'inbox' %}" class="card">
+        <img src="{% static 'images\Notification-Icon.jpg' %}" alt="Stats">
+        <h2>Notificaion</h2>
+    </a>
+</div>
 
 
 
 
-
-html
-Copy code
-{% if messages %}
-    <div class="alert alert-success" id="success-alert">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-{% endif %}
-
-<script>
-    // Ensure the DOM is fully loaded before running the script
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to hide the success alert after 5 seconds
-        setTimeout(function() {
-            var alert = document.getElementById("success-alert");
-            if (alert) {
-                alert.style.display = "none";
-            }
-        }, 5000); // 5000 milliseconds = 5 seconds
-    });
-</script>
 
 {% endblock %}

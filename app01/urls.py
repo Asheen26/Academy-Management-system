@@ -28,5 +28,10 @@ urlpatterns=[
     path('injury/remove/<int:id>/', views.remove_injury, name='remove_injury'),
     path('active-injury-list/', views.active_injury_list, name='active_injury_list'),
     path('injury-history/', views.injury_history, name='injury_history'),
+    path('player_list/', views.player_list, name='player_list'),
+    path('list_player_profile/<int:id>/',views.list_player_profile,name='list_player_profile'),
+    path('staff_profile/',views.staff_profile,name='staff_profile'),
+    path('staff_list/',views.staff_list,name='staff_list'),
+    path('list_staff_profile/<int:id>/',views.list_staff_profile,name='list_staff_profile'),
 
 ]

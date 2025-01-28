@@ -52,7 +52,7 @@ def login(request):
             request.session['email']=playerdetls.email
             request.session['puser']='puser'
 
-            return render(request,'landing.html')
+            return redirect('landing')
         
     elif staff.objects.filter(email=email,password=password).exists():
         staffdetls=staff.objects.get(email=email,password=password)
@@ -136,29 +136,30 @@ def analyst_dashboard(request):
 
 def take_player_attendance(request):
     if request.method == "POST":
+        print(request.POST) 
         attendance_date = request.POST.get('attendance_date', date.today())
         for player_instance in player.objects.all():
-            # Get the attendance status using the player ID
+          
             attendance_status = request.POST.get(f'attendance_{player_instance.id}')
             late_minutes = request.POST.get(f'late_minutes_{player_instance.id}', None)
 
-            # Skip if no attendance status is selected for the player
+           
             if not attendance_status:
                 continue
 
-            # Convert late_minutes to an integer if it's not empty and "Late" is selected
+          
             if attendance_status == "Late" and late_minutes:
                 late_minutes = int(late_minutes)
             else:
                 late_minutes = None
 
-            # Save attendance record
+       
             Attendance.objects.create(
                 player_dtls=player_instance,
                 date=attendance_date,
                 status=attendance_status,
                 late_minutes=late_minutes,
-                taken_by=staff.objects.get(id=request.session['sid']),  # Assuming staff is logged in
+                taken_by=staff.objects.get(id=request.session['sid']),  
             )
 
         messages.success(request, "Attendance successfully saved!")
@@ -172,47 +173,62 @@ def take_player_attendance(request):
 
 def view_player_attendance(request):
     if request.method == "GET":
-        # Get the date from the query parameters
+    
         filter_date = request.GET.get('filter_date')
         
         if filter_date:
-            # Filter attendance records by the selected date
+            
             attendance_records  = Attendance.objects.filter(date=filter_date).select_related('player_dtls')
         else:
-            # Show all records if no date is selected
+           
             attendance_records = Attendance.objects.all().select_related('player_dtls')
 
         context = {
             'attendance_records': attendance_records,
-            'filter_date': filter_date,  # To prefill the date field in the template
+            'filter_date': filter_date,  
         }
         return render(request, 'view_player_attendance.html', context)
 
 
 
 def give_player_stats(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         for player_instance in player.objects.all():
+            match_stat = request.POST.get(f"matches_{player_instance.id}",0)
+            goal_stat = request.POST.get(f"goals_{player_instance.id}",0)
+            assist_stat = request.POST.get(f"assists_{player_instance.id}",0)
+            tackle_stat = request.POST.get(f"tackles_{player_instance.id}",0)
+            save_stat = request.POST.get(f"saves_{player_instance.id}",0)
 
-            match_stat=request.POST.get(f"matches_{ player_instance.id }")
-            goal_stat=request.POST.get(f"goals_{ player_instance.id }")
-            asisst_stat=request.POST.get(f"assists_{ player_instance.id }")
-            tackle_stat=request.POST.get(f"tackles_{ player_instance.id }")
-            save_stat=request.POST.get(f"saves_{ player_instance.id }")
-
-            Stats.objects.create(player_dtls=player_instance,matches=match_stat,goals=goal_stat,assists=asisst_stat,tackles=tackle_stat,saves=save_stat,
-                                 given_by=staff.objects.get(id=request.session['sid']),)
             
-        messages.success(request, "Attendance successfully saved!")
+            Stats.objects.update_or_create(
+                player_dtls=player_instance,
+                defaults={
+                    'matches': match_stat,
+                    'goals': goal_stat,
+                    'assists': assist_stat,
+                    'tackles': tackle_stat,
+                    'saves': save_stat,
+                    'given_by': staff.objects.get(id=request.session['sid']),
+                }
+            )
+        
+        messages.success(request, "Player stats successfully updated!")
         return redirect('analyst_dashboard')
+    
+    
     players = player.objects.all()
-    return render(request, 'give_player_stats.html', {'players': players})
+    stats = Stats.objects.all()
+
+    return render(request, 'give_player_stats.html', {'players': players, 'stats': stats})
+
+    
     
 
 def view_player_stats(request):
 
-    # Retrieve all player stats
-    stats = Stats.objects.select_related('player_dtls', 'given_by')  # Optimized with select_related
+  
+    stats = Stats.objects.select_related('player_dtls', 'given_by')  
     return render(request, 'view_player_stats.html', {'stats': stats})
 
 
@@ -221,15 +237,15 @@ def view_player_stats(request):
 
 def send_message(request):
     if request.method == "POST":
-        sender = staff.objects.get(id=request.session['sid'])  # Assuming staff is logged in
+        sender = staff.objects.get(id=request.session['sid'])  
         recipient_type = request.POST.get('recipient_type')
         content = request.POST.get('content')
 
         if recipient_type == 'all_players':
-            # Send to all players
+            
             Message.objects.create(sender=sender, content=content)
         elif recipient_type in ['Admin', 'Coach', 'Medical', 'Analyst']:
-            # Send to specific department
+           
             Message.objects.create(sender=sender, receiver_department=recipient_type, content=content)
         
         django_messages.success(request, "Message sent successfully!")
@@ -244,16 +260,16 @@ def inbox(request):
     user_type = request.session.get('puser') or request.session.get('suser')
 
     if user_type == 'puser':
-        # Player messages
+        
         messages = Message.objects.filter(receiver_department=None).order_by('-timestamp')
     elif user_type == 'suser':
-        # Department-specific messages
+      
         staff_department = request.session.get('department')
         messages = Message.objects.filter(receiver_department=staff_department).order_by('-timestamp')
     else:
         messages = []
 
-    # Mark messages as read
+    
     messages.update(is_read=True)
 
     return render(request, 'inbox.html', {'messages': messages})
@@ -266,23 +282,23 @@ def inbox(request):
 
 
 def upload_workload(request):
-    players = player.objects.all()  # Fetch all players at the beginning
-    player_workload_data = []  # Store data to send to the template
+    players = player.objects.all()  
+    player_workload_data = []
 
     if request.method == "POST":
         for player_instance in players:
            
-                # Get form data
+               
             training_minutes = int(request.POST.get(f'training_minutes_{player_instance.id}', 0))
             intensity = request.POST.get(f'intensity_{player_instance.id}', 'low')
             match_minutes = int(request.POST.get(f'match_minutes_{player_instance.id}', 0))
             match_distance = float(request.POST.get(f'distance_{player_instance.id}', 0.0))
 
-                # Calculate workloads and categories
+              
             training_workload_category, match_workload_category, total_workload_category = calculate_workload(
                     training_minutes, match_minutes, intensity, match_distance)
 
-                # Update or create workload entry
+                
             Workload.objects.update_or_create(
                 player=player_instance,
                     defaults={
@@ -298,12 +314,11 @@ def upload_workload(request):
 
            
 
-    # After processing POST, or if it's a GET request, fetch existing workload data
+
     for player_instance in players:
-        # Use filter and first to get the workload or None if it doesn't exist
         workload = Workload.objects.filter(player=player_instance).first()
 
-        # Directly set values based on whether workload exists
+        
         player_workload_data.append({
             'player': player_instance,
             'training_minutes': workload.training_minutes if workload else 0,
@@ -315,23 +330,23 @@ def upload_workload(request):
             'total_workload': workload.total_workload if workload else 'N/A',
         })
 
-    # Pass data to template
+ 
     return render(request, 'upload_workload.html', {'player_workload_data': player_workload_data})
 
 
 def calculate_workload(training_minutes, match_minutes, intensity, distance):
-    # Calculate Training Workload (minutes * intensity factor)
+  
     if intensity == 'low':
-        training_workload = training_minutes * 0.5  # Low intensity has lower impact
+        training_workload = training_minutes * 0.5  
     elif intensity == 'medium':
-        training_workload = training_minutes * 1.0  # Medium intensity
+        training_workload = training_minutes * 1.0  
     elif intensity == 'high':
-        training_workload = training_minutes * 1.5  # High intensity has higher impact
+        training_workload = training_minutes * 1.5  
 
-    # Calculate Match Workload (minutes * distance factor)
-    match_workload = match_minutes * (1 + distance * 0.2)  # Distance increases workload
+
+    match_workload = match_minutes * (1 + distance * 0.2)  
     
-    # Calculate Workload Categories for Training
+ 
     if training_workload < 60:
         training_workload_category = 'low'
     elif 60 <= training_workload < 120:
@@ -340,7 +355,7 @@ def calculate_workload(training_minutes, match_minutes, intensity, distance):
         training_workload_category = 'high'
     else:
         training_workload_category = 'very high'
-    # Calculate Workload Categories for Match
+
     if match_workload < 60:
         match_workload_category = 'low'
     elif 60 <= match_workload < 120:
@@ -350,10 +365,9 @@ def calculate_workload(training_minutes, match_minutes, intensity, distance):
     else:
         match_workload_category = 'very high'
     
-    # Now calculate total workload: average of training and match workload
     total_workload = (training_workload + match_workload) / 2
     
-    # Calculate Total Workload Category
+  
     if total_workload < 60:
         total_workload_category = 'low'
     elif 60 <= total_workload < 120:
@@ -368,7 +382,7 @@ def calculate_workload(training_minutes, match_minutes, intensity, distance):
 
 def view_workload(request):
 
-    workloads = Workload.objects.all()  # Fetch all workload entries
+    workloads = Workload.objects.all()  
     return render(request, 'view_workload.html', {'workloads': workloads})
 
 
@@ -384,7 +398,7 @@ def training_schedule(request):
     ]
 
     if request.method == 'POST':
-        for session_index in range(1, 4):  # For Session 1, 2, and 3
+        for session_index in range(1, 4):  
             session_name = f'Session {session_index}'
             session, created = TrainingSession.objects.get_or_create(session_name=session_name)
             session.monday = request.POST.get(f'session_{session_index}_monday', 'Rest')
@@ -396,7 +410,7 @@ def training_schedule(request):
             session.sunday = request.POST.get(f'session_{session_index}_sunday', 'Rest')
             session.save()
 
-        return redirect('view_schedule')  # Redirect to the view schedule page
+        return redirect('view_schedule')  
 
     return render(request, 'training_schedule.html', {
         'categories': categories,
@@ -416,7 +430,6 @@ def injury_management(request):
         out_for = request.POST.get('out_for')
         recovery_programme = request.POST.get('recovery_programme', '')
 
-        # Create or update the injury record
         InjuryList.objects.update_or_create(
             player_injured_id=player_injured,
             injury_type=injury_type,
@@ -425,9 +438,7 @@ def injury_management(request):
             defaults={'recovery_programme': recovery_programme, 'is_active': True}
         )
 
-        return redirect('injury_management')  # Redirect to the same page after submission
-
-    # Fetch all players and active injuries
+        return redirect('injury_management')  
     players = player.objects.all()
     active_injuries = InjuryList.objects.filter(is_active=True)
 
@@ -451,6 +462,40 @@ def active_injury_list(request):
 
 
 def injury_history(request):
-    injury_history = InjuryList.objects.all()  # Fetch all injuries
+    injury_history = InjuryList.objects.all()  
     return render(request, 'injury_history.html', {
         'injury_history': injury_history,})
+
+
+def player_list(request):
+    players = player.objects.all()
+    return render(request, 'player_list.html', {'players': players})
+
+
+def list_player_profile(request,id):
+    xpro = player.objects.get(id=id)  
+    stat = Stats.objects.filter(player_dtls=xpro).first()  
+    work = Workload.objects.filter(player=xpro).first()  
+    active_injury = InjuryList.objects.filter(player_injured=xpro, is_active=True).first()  
+
+    return render(request, 'list_player_profile.html', {'result':xpro, 'stat':stat, 'work':work, 'active_injury':active_injury,})
+
+
+
+
+def staff_profile(request):
+    tem=request.session['sid']
+    vpro=staff.objects.get(id=tem)
+    return render(request,'staff_profile.html',{'result':vpro})
+
+    
+def list_staff_profile(request,id):
+    vpro=staff.objects.get(id=id)
+    return render(request,'list_staff_profile.html',{'result':vpro})
+
+
+
+def staff_list(request):
+    staffs = staff.objects.all()
+    return render(request, 'staff_list.html', {'staffs': staffs})
+

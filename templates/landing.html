@@ -90,34 +90,26 @@
 
 <div class="page-title">
     <h2>Player Dashboard</h2>
-    <a href="">LogOut</a>
 </div>
 
-<a href="{% url 'send_message' %}">Messages</a>
-<a href="{% url 'inbox' %}">INBOX</a>
+
 <div class="card-container">
     <!-- Training Schedule Card -->
-    <a href="" class="card">
+    <a href="{% url 'view_schedule' %}" class="card">
         <img src="{% static 'images\training_scheduke.jpg' %}" alt="Training Schedule">
         <h2>Training Schedule</h2>
     </a>
 
-    <!-- Medical Report Card -->
-    <a href="" class="card">
-        <img src="{% static 'images\medical_report.jpg' %}" alt="Medical Report">
-        <h2>Medical Report</h2>
-    </a>
-
-    <!-- Stats Card -->
-    <a href="" class="card">
-        <img src="{% static 'images\stats.jpg' %}" alt="Stats">
-        <h2>Statistics</h2>
-    </a>
 
     <!-- Profile Card -->
     <a href="{% url 'player_profile' %}" class="card">
         <img src="{% static 'images\player_profile.jpg' %}" alt="Profile">
         <h2>Profile</h2>
+    </a>
+
+    <a href="{% url 'inbox' %}" class="card">
+        <img src="{% static 'images\Notification-Icon.jpg' %}" alt="Stats">
+        <h2>Notificaion</h2>
     </a>
 </div>
 

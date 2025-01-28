@@ -187,23 +187,7 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    
-    // Password validation
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('form');
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm_password');
-        const errorMessage = document.getElementById('password_error');
-
-        form.addEventListener('submit', function (event) {
-            if (password.value !== confirmPassword.value) {
-                errorMessage.style.display = 'block';
-                event.preventDefault();
-            } else {
-                errorMessage.style.display = 'none';
-            }
-        });
-    });
+  
 </script>
 
 {% endblock %}

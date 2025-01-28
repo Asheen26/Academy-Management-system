@@ -124,8 +124,8 @@ class InjuryList(models.Model):
     injury_date=models.DateField()
     out_for=models.CharField(max_length=100)
     recovery_programme=models.CharField(max_length=200)
-    is_active = models.BooleanField(default=True)  # True if the injury is still active
-
+    is_active = models.BooleanField(default=True)  
+    
     def __str__(self):
         return f"{self.player_injured.full_name} - {self.injury_type}"
  

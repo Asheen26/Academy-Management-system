@@ -226,20 +226,8 @@
         reader.readAsDataURL(event.target.files[0]);  
     }
 
-    // Password validation
-    window.onload = function() {
-        const messageStatus = document.getElementById('message-status').value;
-        if (messageStatus === 'success') {
-            // Show the success popup
-            const popup = document.getElementById('popup');
-            popup.style.display = 'block';
+ 
 
-            // Hide the popup after 3 seconds
-            setTimeout(function() {
-                popup.style.display = 'none';
-            }, 3000);
-        }
-    };
 </script>
 
 {% endblock %}
